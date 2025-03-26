@@ -1,9 +1,10 @@
-FROM python:3.6
+FROM python:3.13-alpine
 
-ARG GITMAN_VERSION=1.4
+ARG GITMAN_VERSION=3.5.2
 
 RUN ( \
     set -eux; \
+    apk add --no-cache git bash; \
     pip install gitman==${GITMAN_VERSION} --no-cache-dir; \
 )
 ADD entrypoint.sh /entrypoint.sh
