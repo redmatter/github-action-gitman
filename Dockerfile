@@ -2,12 +2,15 @@ FROM python:3.13-alpine
 
 ARG GITMAN_VERSION=3.5.2
 
+ADD entrypoint.sh /entrypoint.sh
+
 RUN ( \
     set -eux; \
     apk add --no-cache git bash; \
     pip install gitman==${GITMAN_VERSION} --no-cache-dir; \
+    \
+    chmod +x /entrypoint.sh; \
 )
-ADD entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT [ "/entrypoint.sh" ]
 
