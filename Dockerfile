@@ -22,4 +22,4 @@ LABEL \
     org.label-schema.name="redmatter/gitman" \
     org.label-schema.license="MIT License" \
     org.label-schema.url="https://redmatter.com/" \
-    org.label-schema.vcs-url="https://github.com/redmatter/docker-gitman" \
+    org.label-schema.vcs-url="https://github.com/redmatter/docker-gitman"
