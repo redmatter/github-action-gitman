@@ -1,0 +1,39 @@
+name: GitMan Install
+description: >
+  GitMan is a Language-agnostic dependency manager using Git.
+  This action installs dependencies using GitMan.
+
+branding:
+  icon: external-link
+  color: orange
+
+inputs:
+  quiet:
+    description: 'Only display errors (and prompts)'
+    default: 'false'
+    required: false
+  verbose:
+    description: 'Enable verbose logging'
+    default: 'false'
+    required: false
+  root-dir:
+    description: 'directory relative to the repository root, where the dependencies are installed'
+    default: ''
+    required: false
+  depth:
+    description: 'limit the number of dependency levels'
+    default: ''
+    required: false
+  no-scripts:
+    description: 'skip running scripts after install'
+    default: 'false'
+    required: false
+
+outputs:
+  rpm-packages:
+    description: 'A comma separated list of RPM packages.'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args: [install-github-action, '${{ inputs.quiet }}', '${{ inputs.verbose }}', '${{ inputs.root-dir }}', '${{ inputs.depth }}', '${{ inputs.no-scripts }}']

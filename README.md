@@ -1,22 +1,53 @@
-# Dockerised Gitman
+# Docker Image &amp; GitHub Action for `gitman`
 
-Source of the docker image [`redmatter/gitman`](https://hub.docker.com/r/redmatter/gitman/).
+`gitman` documentation can be found at https://github.com/jacebrowning/gitman
 
-Documentation on `gitman` can be found at https://github.com/jacebrowning/gitman
+If you need to use `gitman` in a CI/CD pipeline, you can use the GitHub Action provided in this repository. For local
+use, to manage `gitman` dependencies, you can use the Docker image provided in this repository.
 
-Inspiration and entrypoint logic from [php composer](https://github.com/composer/docker/).
+## GitHub Action
 
-# How to use it?
+### Inputs
 
-In what ever way you use it, you will have to setup a volume with your project content; the easiest way to do that is by
-setting up your current working directory. i.e by passing in the `docker run` option `--volume=$(pwd):/project`.
+| Option       | Default Value | Description                                                                     |
+|--------------|---------------|---------------------------------------------------------------------------------|
+| `quiet`      | `false`       | Only display errors (and prompts)                                               |
+| `verbose`    | `false`       | Enable verbose logging                                                          |
+| `root-dir`   |               | Directory relative to the repository root, where the dependencies are installed |
+| `depth`      |               | Limit the number of dependency levels                                           |
+| `no-scripts` | `false`       | Skip running scripts after install                                              |
 
-## Safest way to run it
+### Example Usage
 
-Here is the safest way to run it; with the same privileges as your user. i.e by passing in the `docker run` option
-`--user=$(id -u):$(id -g)`
+```yaml
+- name: Install Dependencies
+  uses: redmatter/github-action-gitman@main
+  with:
+    root-dir: 'vendor'
+```
 
-The entrypoint script can take all [`gitman` commandline options](https://gitman.readthedocs.io/en/latest/).
+## Docker Image
+
+The docker image can be built using the command below.
+
+```bash
+docker build -t redmatter/gitman .
+```
+
+### How to use it?
+
+When managing dependencies with `gitman`, you need to set up a `gitman.yml` file in your project. Once you have added
+the dependencies to the `gitman.yml` file, you can run the `gitman` command to manage the dependencies.
+
+When using the docker image to manage `gitman` dependencies, you can run the `gitman` command by mounting the project
+directory as a volume.
+
+The use of the docker image in this way can lead to file permission issues. You can avoid this by using the `--user`
+option to run the container with the same privileges as your user. This way, the files created by `gitman` will
+be owned by you. A typical form of the `--user` option is `--user="$(id -u):$(id -g)"`.
+
+See a typical command below, which initializes the `gitman` dependencies. You can replace `init` with [any other
+`gitman` command](https://gitman.readthedocs.io/en/latest/).
 
 ```
 docker run --rm -it \
@@ -26,16 +57,11 @@ docker run --rm -it \
     init
 ```
 
-## Customisations via environment variable
+### Environment Variable
 
-### `PROJECT_DIR`
+For advanced use cases, you can set the following environment variables to configure the behavior of the docker image.
 
-default: `/project`
-
-If you fancy setting up the project volume to be somewhere other than `/project`, you will need to set this variable up.
-
-### `GITMAN_CACHE`
-
-default: `/tmp`
-
-This is the folder that `gitman` uses for caching git repos.
+| Name           | Default Value | Description                                                                   |
+|----------------|---------------|-------------------------------------------------------------------------------|
+| `PROJECT_DIR`  | `/project`    | Directory within the container used as the project directory (root).          |
+| `GITMAN_CACHE` | `/tmp`        | Directory within the container used by `gitman` for caching Git repositories. |
